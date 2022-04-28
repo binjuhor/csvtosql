@@ -1,16 +1,16 @@
 <?php
-$csvFile = './csv/000000001.json.csv';
-
 $tableName = 'myTable';
-
-createSqlFile($csvFile, '000000001.json.sql');
-
 $path    = './csv';
 $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
+
 foreach($files as $file){
-  createSqlFile($csvFile, str_replace('csv','sql',$file));
+  createSqlFile($path.'/'.$file, str_replace('csv','sql', $file));
 }
+
+/**
+ * Function to create sql file
+ */
 
 function createSQLTable($columns, $tableName = 'myTable')
 {
@@ -18,7 +18,7 @@ function createSQLTable($columns, $tableName = 'myTable')
         return false;
     }
 
-    $sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (`id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,";
+    $sql = "CREATE TABLE IF NOT EXISTS `{$tableName}`\n(`id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,";
     foreach ($columns as $column) {
         $sql .= "`{$column}` varchar(255) NOT NULL,\n";
     }
@@ -109,11 +109,13 @@ function csvToArray($csvFile)
         die('CSV file not found');
     }
 
-    if (($fileOpen = fopen($csvFile, "r")) !== FALSE) {
-        while (($data = fgetcsv($fileOpen, 1000, ";")) !== FALSE) {
-            $csvData[] = $data;
+    if('csv' === pathinfo($csvFile, PATHINFO_EXTENSION)) {
+        if (($fileOpen = fopen($csvFile, "r")) !== FALSE) {
+            while (($data = fgetcsv($fileOpen, 1000, ";")) !== FALSE) {
+                $csvData[] = $data;
+            }
+            fclose($fileOpen);
         }
-        fclose($fileOpen);
+        return $csvData;
     }
-    return $csvData;
 }
