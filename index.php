@@ -17,7 +17,7 @@ foreach ($files as $file) {
  * Function to create sql file
  */
 
-function createSQLTable($columns, $tableName = 'myTable')
+function createTableSql($columns, $tableName = 'myTable')
 {
     if (!is_array($columns)) {
         return false;
@@ -30,7 +30,7 @@ function createSQLTable($columns, $tableName = 'myTable')
     return substr($sql, 0, -2) . ")\nENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
 }
 
-function insertDataSQL($arrayData, $columnName, $tableName = 'myTable')
+function createInsertDataSql($arrayData, $columnName, $tableName = 'myTable')
 {
     if (!is_array($arrayData)) {
         return false;
@@ -56,20 +56,20 @@ function insertDataSQL($arrayData, $columnName, $tableName = 'myTable')
     return $sql;
 }
 
-function convertCsvtoSqlString($csvFile, $tableName)
+function convertCsvToSqlString($csvFile, $tableName)
 {
-    $arrayData = csvToArray($csvFile);
+    $arrayData = convertCsvToArrayData($csvFile);
     $columnName = getColumnName($arrayData);
 
-    $sqlCreateTable = createSQLTable($columnName, $tableName);
-    $sqlInsertData = insertDataSQL($arrayData, $columnName, $tableName);
+    $sqlCreateTable = createTableSql($columnName, $tableName);
+    $sqlInsertData = createInsertDataSql($arrayData, $columnName, $tableName);
 
     return $sqlCreateTable . $sqlInsertData;
 }
 
 function createSqlFile($csvFile, $fileName = 'myTable.sql', $tableName = 'myTable')
 {
-    $sqlString = convertCsvtoSqlString($csvFile, $tableName);
+    $sqlString = convertCsvToSqlString($csvFile, $tableName);
     $file = fopen('./sql/' . $fileName, 'w');
     fwrite($file, $sqlString);
     fclose($file);
@@ -82,7 +82,7 @@ function getColumnName($data)
     }
 
     $columnList = array_shift($data);
-    $duplicateArray = duplicateColumn($columnList);
+    $duplicateArray = getDuplicateColumns($columnList);
     $i = 0;
 
     foreach ($columnList as $key => $column) {
@@ -95,7 +95,7 @@ function getColumnName($data)
     return $columnList;
 }
 
-function duplicateColumn($columns)
+function getDuplicateColumns($columns)
 {
     $duplicate = [];
     $array = array_count_values($columns);
@@ -108,7 +108,7 @@ function duplicateColumn($columns)
     return $duplicate;
 }
 
-function csvToArray($csvFile)
+function convertCsvToArrayData($csvFile)
 {
     if (!file_exists($csvFile)) {
         die('CSV file not found');
