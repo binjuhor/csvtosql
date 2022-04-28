@@ -1,9 +1,10 @@
 <?php
 $tableName = 'myTable';
-$path    = './csv';
-$files = scandir($path);
-$files = array_diff(scandir($path), array('.', '..'));
+$svgFolder = './csv';
+$files = scandir($svgFolder);
+$files = array_diff(scandir($svgFolder), array('.', '..'));
 $total = count($files);
+
 $i = 0;
 foreach ($files as $file) {
     system('clear');
