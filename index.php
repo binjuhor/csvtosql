@@ -10,7 +10,7 @@ foreach ($files as $file) {
     echo "Processing file: " . $file . "\n";
     createSqlFile($path . '/' . $file, str_replace('csv', 'sql', $file));
     echo "Complete: " . $i . " of " . $total . " files\n";
-    sleep(2);
+    sleep(1);
     $i++;
 }
 
