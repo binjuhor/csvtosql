@@ -9,7 +9,7 @@ foreach ($files as $file) {
     system('clear');
     echo "Processing file: " . $file . "\n";
     createSqlFile($path . '/' . $file, str_replace('csv', 'sql', $file), $tableName);
-    echo "Complete: " .round($i/$total*100, 2).'% ('.$i . " of " . $total . " files)\n";
+    echo "Complete: " . round($i / $total * 100, 2) . '% (' . $i . " of " . $total . " files)\n";
     $i++;
 }
 
@@ -56,7 +56,7 @@ function insertDataSQL($arrayData, $columnName, $tableName = 'myTable')
     return $sql;
 }
 
-function convertSVGtoSQLString($csvFile, $tableName)
+function convertCsvtoSqlString($csvFile, $tableName)
 {
     $arrayData = csvToArray($csvFile);
     $columnName = getColumnName($arrayData);
@@ -69,7 +69,7 @@ function convertSVGtoSQLString($csvFile, $tableName)
 
 function createSqlFile($csvFile, $fileName = 'myTable.sql', $tableName = 'myTable')
 {
-    $sqlString = convertSVGtoSQLString($csvFile, $tableName);
+    $sqlString = convertCsvtoSqlString($csvFile, $tableName);
     $file = fopen('./sql/' . $fileName, 'w');
     fwrite($file, $sqlString);
     fclose($file);
