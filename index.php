@@ -13,10 +13,6 @@ foreach ($files as $file) {
     $i++;
 }
 
-/**
- * Function to create sql file
- */
-
 function createTableSql($columns, $tableName = 'myTable')
 {
     if (!is_array($columns)) {
