@@ -3,9 +3,16 @@ $tableName = 'myTable';
 $path    = './csv';
 $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
-
-foreach($files as $file){
-  createSqlFile($path.'/'.$file, str_replace('csv','sql', $file));
+$total = count($files);
+$i = 0;
+foreach ($files as $file) {
+    system('clear');
+    echo "Processing file: " . $file . "\n";
+    createSqlFile($path . '/' . $file, str_replace('csv', 'sql', $file));
+    echo "Complete: " . $i . " of " . $total . " files\n";
+    
+    sleep(2);
+    $i++;
 }
 
 /**
@@ -14,7 +21,7 @@ foreach($files as $file){
 
 function createSQLTable($columns, $tableName = 'myTable')
 {
-    if(!is_array($columns)){
+    if (!is_array($columns)) {
         return false;
     }
 
@@ -27,7 +34,7 @@ function createSQLTable($columns, $tableName = 'myTable')
 
 function insertDataSQL($arrayData, $columnName, $tableName = 'myTable')
 {
-    if(!is_array($arrayData)){
+    if (!is_array($arrayData)) {
         return false;
     }
 
@@ -55,24 +62,24 @@ function convertSVGtoSQLString($csvFile, $tableName)
 {
     $arrayData = csvToArray($csvFile);
     $columnName = getColumnName($arrayData);
-    
+
     $sqlCreateTable = createSQLTable($columnName, $tableName);
     $sqlInsertData = insertDataSQL($arrayData, $columnName, $tableName);
 
-    return $sqlCreateTable.$sqlInsertData;
+    return $sqlCreateTable . $sqlInsertData;
 }
 
 function createSqlFile($csvFile, $fileName = 'myTable.sql', $tableName = 'myTable')
 {
     $sqlString = convertSVGtoSQLString($csvFile, $tableName);
-    $file = fopen('./sql/'.$fileName, 'w');
+    $file = fopen('./sql/' . $fileName, 'w');
     fwrite($file, $sqlString);
     fclose($file);
 }
 
 function getColumnName($data)
 {
-    if(!is_array($data)){
+    if (!is_array($data)) {
         return false;
     }
 
@@ -80,8 +87,8 @@ function getColumnName($data)
     $duplicateArray = duplicateColumn($columnList);
     $i = 0;
 
-    foreach($columnList as $key => $column) {
-        if(in_array($column, $duplicateArray) && $key > 0) {
+    foreach ($columnList as $key => $column) {
+        if (in_array($column, $duplicateArray) && $key > 0) {
             $columnList[$key] = $column . '_' . $i;
             $i++;
         }
@@ -90,12 +97,12 @@ function getColumnName($data)
     return $columnList;
 }
 
-function duplicateColumn( $columns ) 
+function duplicateColumn($columns)
 {
     $duplicate = [];
     $array = array_count_values($columns);
-    foreach($array as $key => $arr) {
-        if($arr > 1) {
+    foreach ($array as $key => $arr) {
+        if ($arr > 1) {
             $duplicate[] =  $key;
         }
     }
@@ -105,11 +112,11 @@ function duplicateColumn( $columns )
 
 function csvToArray($csvFile)
 {
-    if(!file_exists($csvFile)) {
+    if (!file_exists($csvFile)) {
         die('CSV file not found');
     }
 
-    if('csv' === pathinfo($csvFile, PATHINFO_EXTENSION)) {
+    if ('csv' === pathinfo($csvFile, PATHINFO_EXTENSION)) {
         if (($fileOpen = fopen($csvFile, "r")) !== FALSE) {
             while (($data = fgetcsv($fileOpen, 1000, ";")) !== FALSE) {
                 $csvData[] = $data;
