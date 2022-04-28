@@ -13,4 +13,5 @@ Use command `php index.php` in root folder then the script will work as you want
 ## contact
 
 E: kiemhd@outlook.com
+
 W: https://binjuhor.now.sh
