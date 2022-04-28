@@ -9,7 +9,7 @@ foreach ($files as $file) {
     system('clear');
     echo "Processing file: " . $file . "\n";
     createSqlFile($path . '/' . $file, str_replace('csv', 'sql', $file));
-    echo "Complete: " .round($i/$total*100, 2).'% ('.$i . " of " . $total . " files )\n";
+    echo "Complete: " .round($i/$total*100, 2).'% ('.$i . " of " . $total . " files)\n";
     $i++;
 }
 
