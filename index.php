@@ -4,14 +4,59 @@ $files = scandir($path);
 $files = array_diff(scandir($path), array('.', '..'));
 $total = count($files) - 1; // -1 because of .gitignore file
 
+/**
+ * SearchNumber: number | retryCount
+ * Source: text|  url, 
+ * SearchJob: text | 
+ * SearchPlace: varchar | location
+ * Ranking: number |  | (yes/no/unknown)
+ * Distance: number | 
+ * Experience: varchar | 
+ * JobTitle: varchar | title ,
+ * JobTasks: varchar | 
+ * JobQualifications: varchar | 
+ */
+
 $i = 0;
 foreach ($files as $file) {
     system('clear');
-    $tableName = 'tbl_'.str_replace('.json.csv', '', $file);
+    $tableName = 'tbl_' . str_replace('.json.csv', '', $file);
     echo "Processing file: " . $file . "\n";
-    createSqlFile($path . '/' . $file,  $tableName.'.sql', $tableName);
+
+    convertCsvToArrayData($path . '/' . $file,);
+    die();
+
+    // createSqlFile($path . '/' . $file,  $tableName . '.sql', $tableName);
     echo "Complete: " . round($i / $total * 100, 2) . '% (' . $i . " of " . $total . " files)\n";
     $i++;
+}
+
+function createDefaultTableSQL($tableName)
+{
+    return "CREATE TABLE IF NOT EXISTS `{$tableName}` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT , 
+    `Source` VARCHAR(255) NOT NULL , 
+    `SearchJob` VARCHAR(255) NOT NULL , 
+    `SearchPlace` VARCHAR(255) NOT NULL , 
+    `Ranking` INT NOT NULL , 
+    `Distance` INT NOT NULL , 
+    `Experience` VARCHAR(255) NOT NULL , 
+    `JobTitle` VARCHAR(255) NOT NULL , 
+    `JobTasks` VARCHAR(255) NOT NULL , 
+    `JobQualifications` VARCHAR(255) NOT NULL , 
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB;";
+}
+
+function sqlFillDataToDefaultTable($tableName, $data)
+{
+    $sql = "INSERT INTO `{$tableName}` (`Source`, `SearchJob`, `SearchPlace`, `Ranking`, `Distance`, `Experience`, `JobTitle`, `JobTasks`, `JobQualifications`) VALUES ";
+    foreach ($data as $row) {
+        $sql .= "('{$row['Source']}', '{$row['SearchJob']}', '{$row['SearchPlace']}', '{$row['Ranking']}', '{$row['Distance']}', '{$row['Experience']}', '{$row['JobTitle']}', '{$row['JobTasks']}', '{$row['JobQualifications']}'),";
+    }
+    $sql = rtrim($sql, ',');
+    $sql .= ";";
+    return $sql;
 }
 
 function createTableSql($columns, $tableName = 'myTable')
@@ -24,7 +69,11 @@ function createTableSql($columns, $tableName = 'myTable')
     foreach ($columns as $column) {
         $sql .= "`{$column}` varchar(255) NOT NULL,\n";
     }
-    return substr($sql, 0, -2) . ")\nENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
+    return substr(
+        $sql,
+        0,
+        -2
+    ) . ")\nENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
 }
 
 function createInsertDataSql($arrayData, $columnName, $tableName = 'myTable')
