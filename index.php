@@ -1,15 +1,15 @@
 <?php
-$tableName = 'myTable';
-$svgFolder = './csv';
-$files = scandir($svgFolder);
-$files = array_diff(scandir($svgFolder), array('.', '..'));
-$total = count($files);
+$path = './csv';
+$files = scandir($path);
+$files = array_diff(scandir($path), array('.', '..'));
+$total = count($files) - 1; // -1 because of .gitignore file
 
 $i = 0;
 foreach ($files as $file) {
     system('clear');
+    $tableName = 'tbl_'.str_replace('.json.csv', '', $file);
     echo "Processing file: " . $file . "\n";
-    createSqlFile($path . '/' . $file, str_replace('csv', 'sql', $file), $tableName);
+    createSqlFile($path . '/' . $file,  $tableName.'.sql', $tableName);
     echo "Complete: " . round($i / $total * 100, 2) . '% (' . $i . " of " . $total . " files)\n";
     $i++;
 }
