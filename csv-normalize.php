@@ -13,8 +13,8 @@ foreach ($files as $key=> $file) {
     // $tableName = 'tbl_' . str_replace('.json.csv', '', $file);
     $data = convertCsvToArrayData($path.'/' . $file);
     $csvData = normalizeDataTable($data);
-    $filename = str_replace('.json', '', $file);
 
+    $filename = str_replace('.json', '', $file);
 
     $f = fopen('./csvNormalized/'.$filename, 'w');
     if ($f === false) {
@@ -49,39 +49,41 @@ function convertCsvToArrayData($csvFile)
 function normalizeDataTable( $data )
 {
     $defaultRow = 'pageTitle;companyName;jobTitle;location;contractType;workType;timeAgoDateTime;description;profile;predictedSalaryRange;predictedSalaryPeriod;name;star1;star4;star5;star2;star3;site';
-    $dataRow[0] = explode(';', $defaultRow);
+    $dataRow[] = explode(';', $defaultRow);
+    
+    $heading = array_shift($data);
    
     foreach ($data as $key => $row) {
-        $dataRow[$key+1]= [
-            getDataByColumnName($row, $data, 'pageTitle'),
-            getDataByColumnName($row, $data, 'company'), //companyName
-            getDataByColumnName($row, $data, ['title', 'jobTitle']), //jobTitle
-            getDataByColumnName($row, $data, 'location'),
-            getDataByColumnName($row, $data, 'contractType', ''),
-            getDataByColumnName($row, $data, ['workType','workFromHome']), //workType
-            getDataByColumnName($row, $data, 'timeAgoDateTime'),
-            getDataByColumnName($row, $data, 'description', ''),
-            getDataByColumnName($row, $data, 'profile', ''),
-            getDataByColumnName($row, $data, 'predictedSalaryRange', ''),
-            getDataByColumnName($row, $data, 'predictedSalaryPeriod', ''),
-            getDataByColumnName($row, $data, 'name', ''),
-            getDataByColumnName($row, $data, 'star1', 0),
-            getDataByColumnName($row, $data, 'star2', 0),
-            getDataByColumnName($row, $data, 'star3', 0),
-            getDataByColumnName($row, $data, 'star4', 0),
-            getDataByColumnName($row, $data, 'star5', 0),
-            getDataByColumnName($row, $data, ['site', 'url']),
+        $dataRow[]= [
+            getDataByColumnName($row, $heading, 'pageTitle'),
+            getDataByColumnName($row, $heading, 'company'), //companyName
+            getDataByColumnName($row, $heading, ['title', 'jobTitle']), //jobTitle
+            getDataByColumnName($row, $heading, 'location'),
+            getDataByColumnName($row, $heading, 'contractType', ''),
+            getDataByColumnName($row, $heading, ['workType','workFromHome']), //workType
+            getDataByColumnName($row, $heading, 'timeAgoDateTime'),
+            getDataByColumnName($row, $heading, 'description', ''),
+            getDataByColumnName($row, $heading, 'profile', ''),
+            getDataByColumnName($row, $heading, 'predictedSalaryRange', ''),
+            getDataByColumnName($row, $heading, 'predictedSalaryPeriod', ''),
+            getDataByColumnName($row, $heading, 'name', ''),
+            getDataByColumnName($row, $heading, 'star1', 0),
+            getDataByColumnName($row, $heading, 'star2', 0),
+            getDataByColumnName($row, $heading, 'star3', 0),
+            getDataByColumnName($row, $heading, 'star4', 0),
+            getDataByColumnName($row, $heading, 'star5', 0),
+            getDataByColumnName($row, $heading, ['site', 'url']),
         ];
-        return $dataRow;
     }
+    return $dataRow;
 }
 
-function getDataByColumnName($row, $data, $columnName, $defaultValue = '')
+function getDataByColumnName($row, $heading, $columnName, $defaultValue = '')
 {
     if(is_array($columnName)) {
-        $columnIndex = getColumnIndex($columnName, $data);
+        $columnIndex = getColumnIndex($columnName, $heading );
     } else {
-        $columnIndex = array_search($columnName, $data[0]);
+        $columnIndex = array_search($columnName, $heading );
     }
     
     if(!$columnIndex){
@@ -89,21 +91,21 @@ function getDataByColumnName($row, $data, $columnName, $defaultValue = '')
     }
     
     if($defaultValue === 0) {
-        if($row[$columnIndex]) {
+        if(isset($row[$columnIndex])) {
             return (int) $row[$columnIndex];
         }
     }
 
-    if($row[$columnIndex]) {
+    if(isset($row[$columnIndex])) {
         return $row[$columnIndex];
     }
 
     return $defaultValue;
 }
 
-function getColumnIndex($columnName, $data) {
+function getColumnIndex($columnName, $heading) {
     foreach($columnName as $column) {
-        $columnIndex = array_search($column, $data[0]);
+        $columnIndex = array_search($column, $heading);
         if($columnIndex) {
             return $columnIndex;
         }
