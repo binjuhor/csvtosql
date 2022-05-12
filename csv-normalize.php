@@ -6,7 +6,7 @@ $total = count($files);
 
 foreach ($files as $key=> $file) {
     system('clear');
-    if('.gitignore' == $file) {
+    if('.gitignore' == $file || '.DS_Store' == $file) {
         continue;
     }
     echo "Processing file: " . $file . "\n";
@@ -21,7 +21,7 @@ foreach ($files as $key=> $file) {
         die('Error opening the file ' . $filename);
     }
     foreach ($csvData as $row) {
-        fputcsv($f, $row);
+        fputcsv($f, $row, ';');
     }
     fclose($f);
     // $sql =  createDefaultTableSQL($tableName)."\n".sqlInsertDataToTable($tableName, $data);

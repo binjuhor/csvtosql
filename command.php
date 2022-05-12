@@ -7,7 +7,7 @@ $total = count($files);
 $i = 0;
 foreach ($files as $file) {
     system('clear');
-    if('.gitignore' == $file) {
+    if('.gitignore' == $file || '.DS_Store' == $file) {
         continue;
     }
     echo "Processing file: " . $file . "\n";
