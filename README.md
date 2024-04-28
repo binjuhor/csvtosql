@@ -14,4 +14,4 @@ Use command `php index.php` in root folder then the script will work as you want
 
 E: kiemhd@outlook.com
 
-W: https://binjuhor.now.sh
+W: https://binjuhor.com
